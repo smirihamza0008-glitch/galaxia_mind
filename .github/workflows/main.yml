@@ -18,19 +18,24 @@ jobs:
         uses: actions/subosito/flutter-action@v2
         with:
           channel: 'stable'
-          flutter-version: '3.19.0'
 
-      - name: Get Dependencies
-        run: flutter pub get
+      - name: Force Clean and Create Android Base
+        run: |
+          rm -rf pubspec.yaml
+          flutter create --org com.smiri.galaxia --project-name galaxia_mind .
+          
+      - name: Overwrite Main Code
+        run: |
+          rm -rf lib/main.dart
+          curl -o lib/main.dart https://raw.githubusercontent.com/${{ github.repository }}/main/lib/main.dart
 
-      - name: Create Android Build Skeleton
-        run: flutter create . --platforms=android
+      - name: Get Dependencies and Build
+        run: |
+          flutter pub get
+          flutter build apk --debug
 
-      - name: Build APK
-        run: flutter build apk --release
-
-      - name: Upload Build Artifact
+      - name: Upload APK Package
         uses: actions/upload-artifact@v3
         with:
-          name: galaxia-mind-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+          name: Galaxia-Mind-Game
+          path: build/app/outputs/flutter-apk/app-debug.apk
