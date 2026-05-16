@@ -1,4 +1,4 @@
-name: Build Android APK
+name: Build Galaxia Mind APK
 on: [push, pull_request]
 
 jobs:
@@ -19,23 +19,22 @@ jobs:
         with:
           channel: 'stable'
 
-      - name: Force Clean and Create Android Base
+      - name: Fresh Flutter Project Creation
         run: |
-          rm -rf pubspec.yaml
+          rm -rf pubspec.yaml lib
           flutter create --org com.smiri.galaxia --project-name galaxia_mind .
-          
-      - name: Overwrite Main Code
+
+      - name: Download Ultimate Game Code
         run: |
-          rm -rf lib/main.dart
           curl -o lib/main.dart https://raw.githubusercontent.com/${{ github.repository }}/main/lib/main.dart
 
-      - name: Get Dependencies and Build
+      - name: Build Debug APK
         run: |
           flutter pub get
           flutter build apk --debug
 
-      - name: Upload APK Package
+      - name: Upload APK Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: Galaxia-Mind-Game
+          name: GalaxiaMindGame
           path: build/app/outputs/flutter-apk/app-debug.apk
